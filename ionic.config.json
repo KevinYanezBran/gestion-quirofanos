@@ -1,0 +1,7 @@
+{
+  "name": "gestion-quirofanos",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
