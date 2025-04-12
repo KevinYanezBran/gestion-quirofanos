@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Programar Cirugías</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Nueva Cirugía</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-input placeholder="Nombre del paciente" [(ngModel)]="nuevo.paciente"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Fecha</ion-label>
+        <ion-datetime
+          [(ngModel)]="nuevo.fecha"
+          presentation="date"
+          display-format="dd/MM/yyyy">
+        </ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Hora</ion-label>
+        <ion-datetime
+          [(ngModel)]="nuevo.hora"
+          presentation="time"
+          display-format="HH:mm"
+          picker-format="HH:mm">
+        </ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select [(ngModel)]="nuevo.estado">
+          <ion-select-option value="programada">Programada</ion-select-option>
+          <ion-select-option value="en curso">En curso</ion-select-option>
+          <ion-select-option value="finalizada">Finalizada</ion-select-option>
+          <ion-select-option value="cancelada">Cancelada</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Quirófano</ion-label>
+        <ion-select [(ngModel)]="nuevo.quirofanoId">
+          <ion-select-option *ngFor="let q of quirofanos" [value]="q.id">{{ q.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Equipos asignados</ion-label>
+        <ion-select [(ngModel)]="nuevo.equiposAsignados" multiple="true" interface="popover">
+          <ion-select-option *ngFor="let e of equipos" [value]="e.id">{{ e.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" (click)="agregarCirugia()">Agregar</ion-button>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="cirugias.length > 0">
+    <ion-item *ngFor="let c of cirugias">
+      <ion-label>
+        <h2>{{ c.paciente }}</h2>
+        <p>{{ c.fecha | date: 'dd/MM/yyyy' }} a las {{ c.hora }}</p>
+        <p>Estado: {{ c.estado }}</p>
+        <p>Quirófano: {{ getNombreQuirofano(c.quirofanoId) }}</p>
+
+        <p *ngIf="c.equiposAsignados?.length">
+          Equipos: {{ getNombresEquipos(c.equiposAsignados).join(', ') }}
+        </p>
+        <p *ngIf="!c.equiposAsignados?.length">
+          Sin equipos asignados
+        </p>
+      </ion-label>
+      <ion-button fill="clear" color="warning" (click)="editarCirugia(c)">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>      
+      <ion-button fill="clear" color="danger" (click)="eliminarCirugia(c.id!)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-text *ngIf="cirugias.length === 0" color="medium">
+    <p class="ion-text-center">No hay cirugías registradas.</p>
+  </ion-text>
+
+</ion-content>

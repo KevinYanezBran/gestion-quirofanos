@@ -22,7 +22,7 @@ export class LoginPage {
     try {
       await this.authService.login(this.email, this.password);
       this.showToast('Inicio de sesión exitoso', 'success');
-      this.router.navigate(['/tabs']);
+      this.router.navigate(['/quirofanos']);
     } catch (error) {
       this.showToast('Error al iniciar sesión: ' + (error as any).message, 'danger');
     }

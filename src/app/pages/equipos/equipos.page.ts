@@ -39,6 +39,11 @@ export class EquiposPage implements OnInit {
     });
   }
 
+  getNombreQuirofano(id: string | null | undefined): string {
+    const q = this.quirofanos.find(x => x.id === id);
+    return q ? q.nombre : 'No asignado';
+  }  
+
   agregarEquipo() {
     const data = {
       nombre: this.nuevoNombre,

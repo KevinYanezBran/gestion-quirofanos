@@ -192,4 +192,102 @@ exports.getEquipos = onRequest(async (req, res) => {
       }
     });
   });
+
+  /**
+ * OBTENER CIRUGÍAS
+ */
+exports.getCirugias = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    try {
+      const snapshot = await db.collection("cirugias").get();
+      const cirugias = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      res.status(200).json(cirugias);
+    } catch (error) {
+      res.status(500).json({ error: "Error al obtener cirugías: " + error.message });
+    }
+  });
+});
+
+/**
+ * AGREGAR CIRUGÍA
+ */
+exports.addCirugia = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Método no permitido" });
+    }
+
+    try {
+      const { paciente, fecha, hora, estado, quirofanoId, equiposAsignados } = req.body;
+      if (!paciente || !fecha || !hora || !estado || !quirofanoId) {
+        return res.status(400).json({ error: "Faltan datos obligatorios" });
+      }
+
+      const nueva = {
+        paciente,
+        fecha,
+        hora,
+        estado,
+        quirofanoId,
+        equiposAsignados: equiposAsignados || []
+      };
+
+      const ref = await db.collection("cirugias").add(nueva);
+      res.status(201).json({ id: ref.id, ...nueva });
+    } catch (error) {
+      res.status(500).json({ error: "Error al agregar cirugía: " + error.message });
+    }
+  });
+});
+
+/**
+ * ACTUALIZAR CIRUGÍA
+ */
+exports.updateCirugia = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== "PUT") {
+      return res.status(405).json({ error: "Método no permitido" });
+    }
+
+    try {
+      const { id, paciente, fecha, hora, estado, quirofanoId, equiposAsignados } = req.body;
+      if (!id) return res.status(400).json({ error: "ID requerido" });
+
+      const updateData = {};
+      if (paciente !== undefined) updateData.paciente = paciente;
+      if (fecha !== undefined) updateData.fecha = fecha;
+      if (hora !== undefined) updateData.hora = hora;
+      if (estado !== undefined) updateData.estado = estado;
+      if (quirofanoId !== undefined) updateData.quirofanoId = quirofanoId;
+      if (equiposAsignados !== undefined) updateData.equiposAsignados = equiposAsignados;
+
+      await db.collection("cirugias").doc(id).update(updateData);
+      res.status(200).json({ message: "Cirugía actualizada correctamente" });
+    } catch (error) {
+      res.status(500).json({ error: "Error al actualizar cirugía: " + error.message });
+    }
+  });
+});
+
+/**
+ * ELIMINAR CIRUGÍA
+ */
+exports.deleteCirugia = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== "DELETE") {
+      return res.status(405).json({ error: "Método no permitido" });
+    }
+
+    try {
+      const { id } = req.body;
+      if (!id) return res.status(400).json({ error: "ID requerido" });
+
+      await db.collection("cirugias").doc(id).delete();
+      res.status(200).json({ message: "Cirugía eliminada correctamente" });
+    } catch (error) {
+      res.status(500).json({ error: "Error al eliminar cirugía: " + error.message });
+    }
+  });
+});
+
   
