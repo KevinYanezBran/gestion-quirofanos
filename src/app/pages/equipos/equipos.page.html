@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Equipos Médicos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Agregar nuevo equipo</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input placeholder="Nombre del equipo" [(ngModel)]="nuevoNombre"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select [(ngModel)]="nuevoEstado">
+          <ion-select-option value="operativo">Operativo</ion-select-option>
+          <ion-select-option value="mantenimiento">Mantenimiento</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" (click)="agregarEquipo()">Agregar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="equipos.length > 0">
+    <ion-item *ngFor="let e of equipos">
+      <ion-label>
+        <h2>{{ e.nombre }}</h2>
+        <p>Estado: {{ e.estado }}</p>
+        <p>Quirófano: {{ e.quirofanoId || 'No asignado' }}</p>
+      </ion-label>
+
+      <ion-select placeholder="Asignar a..." interface="popover"
+                  (ionChange)="asignarAQuirofano(e.id!, $event.detail.value)">
+        <ion-select-option [value]="null">Sin asignar</ion-select-option>
+        <ion-select-option *ngFor="let q of quirofanos" [value]="q.id">
+          {{ q.nombre }}
+        </ion-select-option>
+      </ion-select>
+
+      <ion-button fill="clear" color="warning" (click)="editarEquipo(e)">
+        <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="danger" (click)="eliminarEquipo(e.id!)">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-text *ngIf="equipos.length === 0" color="medium">
+    <p class="ion-text-center">No hay equipos registrados.</p>
+  </ion-text>
+</ion-content>

@@ -33,7 +33,21 @@
       <ion-label>
         <h2>{{ q.nombre }}</h2>
         <p>Estado: {{ q.estado }}</p>
+
+        <div *ngIf="equiposDelQuirofano(q.id!).length > 0">
+          <p><strong>Equipos asignados:</strong></p>
+          <ul>
+            <li *ngFor="let e of equiposDelQuirofano(q.id!)">
+              {{ e.nombre }} ({{ e.estado }})
+            </li>
+          </ul>
+        </div>
+
+        <p *ngIf="equiposDelQuirofano(q.id!).length === 0">
+          No hay equipos asignados.
+        </p>
       </ion-label>
+
       <ion-button fill="clear" color="warning" (click)="editarQuirofano(q)">
         <ion-icon slot="icon-only" name="create-outline"></ion-icon>
       </ion-button>
@@ -44,7 +58,7 @@
   </ion-list>
 
   <ion-text *ngIf="quirofanos.length === 0" color="medium">
-    <p class="ion-text-center">No hay quirofanos registrados.</p>
+    <p class="ion-text-center">No hay quirófanos registrados.</p>
   </ion-text>
 
 </ion-content>

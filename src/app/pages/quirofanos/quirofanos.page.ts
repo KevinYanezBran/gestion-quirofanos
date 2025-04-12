@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { QuirofanoService, Quirofano } from 'src/app/services/quirofano.service';
-import { ToastController, AlertController } from '@ionic/angular';
+import { EquipoService, Equipo } from 'src/app/services/equipo.service';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-quirofanos',
@@ -10,17 +11,20 @@ import { ToastController, AlertController } from '@ionic/angular';
 })
 export class QuirofanosPage implements OnInit {
   quirofanos: Quirofano[] = [];
+  equipos: Equipo[] = [];
   nuevoNombre = '';
   nuevoEstado: 'disponible' | 'ocupado' | 'mantenimiento' = 'disponible';
 
   constructor(
     private quirofanoService: QuirofanoService,
-    private toastController: ToastController,
-    private alertController: AlertController
+    private equipoService: EquipoService,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
     this.obtenerQuirofanos();
+    this.obtenerEquipos();
   }
 
   obtenerQuirofanos() {
@@ -29,12 +33,19 @@ export class QuirofanosPage implements OnInit {
     });
   }
 
-  async agregarQuirofano() {
+  obtenerEquipos() {
+    this.equipoService.getEquipos().subscribe(data => {
+      this.equipos = data;
+    });
+  }
+
+  agregarQuirofano() {
     if (!this.nuevoNombre.trim()) return;
 
     const data = {
       nombre: this.nuevoNombre,
-      estado: this.nuevoEstado
+      estado: this.nuevoEstado,
+      equiposAsignados: []
     };
 
     this.quirofanoService.agregarQuirofano(data).subscribe(() => {
@@ -59,7 +70,7 @@ export class QuirofanosPage implements OnInit {
           name: 'estado',
           type: 'text',
           value: quirofano.estado,
-          placeholder: 'Estado'
+          placeholder: 'Estado (disponible, ocupado, mantenimiento)'
         }
       ],
       buttons: [
@@ -87,6 +98,10 @@ export class QuirofanosPage implements OnInit {
       this.showToast('Quirófano eliminado', 'danger');
       this.obtenerQuirofanos();
     });
+  }
+
+  equiposDelQuirofano(id: string): Equipo[] {
+    return this.equipos.filter(e => e.quirofanoId === id);
   }
 
   async showToast(message: string, color: 'success' | 'danger') {

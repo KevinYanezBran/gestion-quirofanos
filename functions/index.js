@@ -106,3 +106,90 @@ exports.deleteQuirofano = onRequest(async (req, res) => {
     }
   });
 });
+
+/**
+ * OBTENER EQUIPOS
+ */
+exports.getEquipos = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+      try {
+        const snapshot = await db.collection("equipos").get();
+        const equipos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(equipos);
+      } catch (error) {
+        res.status(500).json({ error: "Error al obtener equipos: " + error.message });
+      }
+    });
+  });
+  
+  /**
+   * AGREGAR EQUIPO
+   */
+  exports.addEquipo = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Método no permitido" });
+      }
+  
+      try {
+        const { nombre, estado, quirofanoId } = req.body;
+        if (!nombre || !estado) {
+          return res.status(400).json({ error: "Faltan campos obligatorios" });
+        }
+  
+        const nuevo = { nombre, estado, quirofanoId: quirofanoId || null };
+        const ref = await db.collection("equipos").add(nuevo);
+        res.status(201).json({ id: ref.id, ...nuevo });
+      } catch (error) {
+        res.status(500).json({ error: "Error al agregar equipo: " + error.message });
+      }
+    });
+  });
+  
+  /**
+   * ACTUALIZAR EQUIPO
+   */
+  exports.updateEquipo = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+      if (req.method !== "PUT") {
+        return res.status(405).json({ error: "Método no permitido" });
+      }
+  
+      try {
+        const { id, nombre, estado, quirofanoId } = req.body;
+        if (!id) return res.status(400).json({ error: "ID requerido" });
+  
+        const updateData = {};
+        if (nombre !== undefined) updateData.nombre = nombre;
+        if (estado !== undefined) updateData.estado = estado;
+        if (quirofanoId !== undefined) updateData.quirofanoId = quirofanoId;
+  
+        await db.collection("equipos").doc(id).update(updateData);
+        res.status(200).json({ message: "Equipo actualizado" });
+      } catch (error) {
+        res.status(500).json({ error: "Error al actualizar equipo: " + error.message });
+      }
+    });
+  });
+  
+  /**
+   * ELIMINAR EQUIPO
+   */
+  exports.deleteEquipo = onRequest(async (req, res) => {
+    cors(req, res, async () => {
+      if (req.method !== "DELETE") {
+        return res.status(405).json({ error: "Método no permitido" });
+      }
+  
+      try {
+        const { id } = req.body;
+        if (!id) return res.status(400).json({ error: "ID requerido" });
+  
+        await db.collection("equipos").doc(id).delete();
+        res.status(200).json({ message: "Equipo eliminado correctamente" });
+      } catch (error) {
+        res.status(500).json({ error: "Error al eliminar equipo: " + error.message });
+      }
+    });
+  });
+  
