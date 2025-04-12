@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "app-quirofanos",
+    "default": "app-quirofanos-central",
     "app-quirofanos-central": "app-quirofanos-central"
   },
   "targets": {},
