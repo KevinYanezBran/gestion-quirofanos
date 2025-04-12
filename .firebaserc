@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "app-quirofanos",
+    "app-quirofanos-central": "app-quirofanos-central"
+  },
+  "targets": {},
+  "etags": {}
+}

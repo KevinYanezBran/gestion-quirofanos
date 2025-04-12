@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Gestión de Quirófanos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Agregar nuevo quirófano</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input placeholder="Nombre del quirófano" [(ngModel)]="nuevoNombre"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select [(ngModel)]="nuevoEstado">
+          <ion-select-option value="disponible">Disponible</ion-select-option>
+          <ion-select-option value="ocupado">Ocupado</ion-select-option>
+          <ion-select-option value="mantenimiento">Mantenimiento</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" (click)="agregarQuirofano()">Agregar</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="quirofanos.length > 0">
+    <ion-item *ngFor="let q of quirofanos">
+      <ion-label>
+        <h2>{{ q.nombre }}</h2>
+        <p>Estado: {{ q.estado }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="warning" (click)="editarQuirofano(q)">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="danger" (click)="eliminarQuirofano(q.id!)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-text *ngIf="quirofanos.length === 0" color="medium">
+    <p class="ion-text-center">No hay quirofanos registrados.</p>
+  </ion-text>
+
+</ion-content>
